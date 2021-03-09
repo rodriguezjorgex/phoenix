@@ -154,9 +154,7 @@ def join_channels(channels_to_join):
     channels_to_join = set(channels_to_join)
 
     while True:
-        resp = slack_client.api_call(
-            "channels.list", exclude_members=True, limit=limit, cursor=cursor
-        )
+        resp = slack_client.api_call("conversations.list", limit=limit, cursor=cursor)
 
         if "response_metadata" in resp:
             cursor = resp["response_metadata"]["next_cursor"]
@@ -167,7 +165,7 @@ def join_channels(channels_to_join):
                 channels_to_join.remove(channel["name"])
                 channel_id = channel["id"]
                 resp = slack_client.api_call(
-                    "channels.invite", channel=channel_id, user=bot_id
+                    "conversations.invite", channel=channel_id, users=bot_id
                 )
                 if resp.get("ok"):
                     logger.info(f"Bot was invited to channel {channel_id}")
@@ -205,7 +203,7 @@ def utc_to_user_time(utc_time, user_tz):
 
 
 def get_slack_channel_name(channel_id):
-    resp = slack_client.api_call("channels.info", channel=channel_id)
+    resp = slack_client.api_call("conversations.info", channel=channel_id)
     if resp["ok"]:
         return resp["channel"]["name"]
     return None

@@ -1,5 +1,4 @@
 import csv
-from email.message import EmailMessage
 import logging
 import tempfile
 import time
@@ -10,6 +9,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db import DatabaseError, IntegrityError, transaction
+from slugify import slugify
 
 from ..core.models import Monitor, Outage, Profile, Solution
 from ..integration.datadog import get_all_slack_channels, sync_monitor_details
@@ -61,13 +61,13 @@ def create_channel(outage_id, channel_name=None, channel_id=None, invite_users=N
     from .models import Announcement
 
     if not channel_id:
-        resp = slack_client.api_call("channels.create", name=channel_name)
+        resp = slack_client.api_call("conversations.create", name=slugify(channel_name))
         invite_users = invite_users or []
         if resp["ok"]:
             channel_id = resp["channel"]["id"]
 
     if not channel_name:
-        resp = slack_client.api_call("channels.info", channel=channel_id)
+        resp = slack_client.api_call("conversations.info", channel=channel_id)
         if resp["ok"]:
             channel_name = resp["channel"]["name"]
     if channel_id:
@@ -83,15 +83,16 @@ def create_channel(outage_id, channel_name=None, channel_id=None, invite_users=N
 
         # invite phoenix bot to channel to monitor conversation
         slack_client.api_call(
-            "channels.invite", channel=channel_id, user=settings.SLACK_BOT_ID
+            "conversations.invite", channel=channel_id, users=settings.SLACK_BOT_ID
         )
 
         # update announcement to remove action "create channel"
         create_or_update_announcement(outage_id)
 
         for user in invite_users:
+            # Keeping 1 call per user to avoid failing the whole batch
             resp = slack_client.api_call(
-                "channels.invite", channel=channel_id, user=user
+                "conversations.invite", channel=channel_id, users=user
             )
             logger.info(resp)
 
@@ -99,7 +100,7 @@ def create_channel(outage_id, channel_name=None, channel_id=None, invite_users=N
 
 
 def notify_user_with_im(user, message=None, attachments=None):
-    data = slack_bot_client.api_call("im.open", user=user)
+    data = slack_bot_client.api_call("conversations.open", users=user)
     if not data["ok"]:
         logger.error(f"Opening direct message channel failed: {data}")
         return

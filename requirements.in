@@ -15,6 +15,7 @@ google-auth
 gunicorn
 kiwi-structlog-config
 psycopg2-binary
+python-slugify
 raven
 redis
 requests

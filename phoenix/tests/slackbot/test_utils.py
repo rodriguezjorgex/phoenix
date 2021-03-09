@@ -99,9 +99,9 @@ def test_join_channels(mocked_api_call):
     channels_to_join = ["channel-x", "test-channel", "channel-a"]
     utils.join_channels(channels_to_join)
     test_called_with = (
-        "call('channels.list', cursor='', exclude_members=True, limit=200)",
-        "call('channels.invite', channel='123sd', user='unittest-bot-id')",
-        "call('channels.invite', channel='45fg', user='unittest-bot-id')",
+        "call('conversations.list', cursor='', limit=200)",
+        "call('conversations.invite', channel='123sd', users='unittest-bot-id')",
+        "call('conversations.invite', channel='45fg', users='unittest-bot-id')",
     )
     for i, args in enumerate(mocked_api_call.call_args_list):
         assert str(args) == test_called_with[i]
