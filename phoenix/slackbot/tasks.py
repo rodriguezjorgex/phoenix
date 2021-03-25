@@ -818,16 +818,21 @@ def notify_b2b_about_creation(announcement):
         or announcement.b2b_notified
     ):
         return
+
     announcement_url = announcement.permalink
     msg = "New outage affecting B2B Partners has been announced"
     if announcement_url:
         msg += f": {announcement_url}"
-    data = slack_client.api_call(
-        "chat.postMessage", channel=settings.SLACK_NOTIFY_B2B_CHANNEL_ID, text=msg
-    )
-    if not data["ok"]:
-        logger.error(f"Outage creation notification failed: {data['error']}")
-        return
+
+    channels = settings.SLACK_NOTIFY_B2B_CHANNEL_ID.split(",")
+    for channel in channels:
+        data = slack_client.api_call(
+            "chat.postMessage", channel=channel, text=msg
+        )
+        if not data["ok"]:
+            logger.error(f"Outage creation notification failed: {data['error']}")
+            return
+
     announcement.b2b_notified = True
     announcement.save()
 
