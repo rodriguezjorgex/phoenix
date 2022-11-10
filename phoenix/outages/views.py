@@ -12,8 +12,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 from django.shortcuts import redirect
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAdminUser
+from rest_framework.decorators import api_view
 
 from ..core.models import Monitor, Outage, Solution
 from ..core.utils import user_can_modify_outage
@@ -223,7 +222,6 @@ class MonitorUpdateView(UpdateView):
 
 
 @api_view(["GET"])
-@permission_classes([IsAdminUser])
 def get_outages_csv_export(request):
     date_from = request.query_params.get("from", "")
     date_to = request.query_params.get("to", "")
