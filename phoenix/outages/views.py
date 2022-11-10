@@ -2,13 +2,18 @@ from datetime import datetime
 
 import csv
 import arrow
-from django.http import Http404, HttpResponseForbidden, HttpResponseBadRequest, HttpResponse
+from django.http import (
+    Http404,
+    HttpResponseForbidden,
+    HttpResponseBadRequest,
+    HttpResponse,
+)
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 from django.shortcuts import redirect
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser
 
 from ..core.models import Monitor, Outage, Solution
 from ..core.utils import user_can_modify_outage
@@ -218,7 +223,7 @@ class MonitorUpdateView(UpdateView):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser])
 def get_outages_csv_export(request):
     date_from = request.query_params.get("from", "")
     date_to = request.query_params.get("to", "")
@@ -226,7 +231,9 @@ def get_outages_csv_export(request):
     try:
         date_from = datetime.strptime(date_from, "%Y-%m-%d")
     except ValueError:
-        return HttpResponseBadRequest("Bad query argument 'from' , format should be y-m-d")
+        return HttpResponseBadRequest(
+            "Bad query argument 'from' , format should be y-m-d"
+        )
 
     try:
         date_to = datetime.strptime(date_to, "%Y-%m-%d")
@@ -234,7 +241,9 @@ def get_outages_csv_export(request):
         return HttpResponseBadRequest("Bad query argument 'to', format should be y-m-d")
 
     response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = f'attachment; filename="outages_export_{date_from.strftime("%Y-%m-%d")}_{date_to.strftime("%Y-%m-%d")}.csv"'
+    response[
+        "Content-Disposition"
+    ] = f'attachment; filename="outages_export_{date_from.strftime("%Y-%m-%d")}_{date_to.strftime("%Y-%m-%d")}.csv"'
     writer = csv.writer(response)
 
     row = [
@@ -249,17 +258,19 @@ def get_outages_csv_export(request):
         "Estimated loss of net revenue",
         "Booking impact",
         "Link to postmortem",
-        "Slack announcement"
+        "Slack announcement",
     ]
     writer.writerow(row)
 
     for outage in Outage.objects.filter(started_at__range=[date_from, date_to]):
-        abs_impact_on_turnover = abs(outage.impact_on_turnover) if outage.impact_on_turnover else 0
-        range = "0 - 50 000 EUR"
+        abs_impact_on_turnover = (
+            abs(outage.impact_on_turnover) if outage.impact_on_turnover else 0
+        )
+        outage_range = "0 - 50 000 EUR"
         if abs_impact_on_turnover > 150000:
-            range = "150 000 - xxx EUR"
+            outage_range = "150 000 - xxx EUR"
         if 50000 < abs_impact_on_turnover < 150000:
-            range = "50 000-150 000 EUR"
+            outage_range = "50 000-150 000 EUR"
 
         try:
             outage_duration = outage.solution.real_downtime
@@ -273,7 +284,7 @@ def get_outages_csv_export(request):
             solution_summary = ""
 
         row = [
-            range,
+            outage_range,
             outage.started_at.strftime("%V"),
             outage.summary,
             outage.systems_affected_human,
@@ -284,7 +295,7 @@ def get_outages_csv_export(request):
             solution_summary,
             outage.lost_bookings_choice,
             report_url,
-            link
+            link,
         ]
 
         writer.writerow(row)

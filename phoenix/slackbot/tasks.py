@@ -826,9 +826,7 @@ def notify_b2b_about_creation(announcement):
 
     channels = settings.SLACK_NOTIFY_B2B_CHANNEL_ID.split(",")
     for channel in channels:
-        data = slack_client.api_call(
-            "chat.postMessage", channel=channel, text=msg
-        )
+        data = slack_client.api_call("chat.postMessage", channel=channel, text=msg)
         if not data["ok"]:
             logger.error(f"Outage creation notification failed: {data['error']}")
             return
