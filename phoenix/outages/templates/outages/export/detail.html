@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="mdl-grid">
+    <div class="mdl-layout-spacer"></div>
+    </div>
+    <div class="mdl-grid">
+      <div class="mdl-layout-spacer"></div>
+      <div class="mdl-cell mdl-cell--6-col mdl-shadow--2dp form-wrapper" style="padding: 16px;">
+      <form action="{% url 'export_detail' %}" method="POST" id="export-csv-form">
+        <div class="mdl-card">
+          <div class="mdl-card__title">
+             <h2 class="mdl-card__title-text">CSV outage export</h2>
+          </div>
+           {% csrf_token %}
+
+            {{ form.non_field_errors }}
+
+            {% for hidden_field in form.hidden_fields %}
+              {{ hidden_field.errors }}
+              {{ hidden_field }}
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+
+                <div class="mdl-textfield mdl-js-textfield">
+                  <label>{{ field.label }}</label>
+                  {{ field }}
+                </div>
+            {% endfor %}
+          <div class="mdl-card__actions">
+            <button class="mdl-button mdl-js-button mdl-button--raised" type="submit">
+              <span class="mdl-button__label">Export</span>
+            </button>
+          </div>
+        </div>
+      </form>
+      </div>
+      <div class="mdl-layout-spacer"></div>
+    </div>
+{% endblock %}

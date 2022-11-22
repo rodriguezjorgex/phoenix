@@ -13,7 +13,7 @@ from .views import (
     SolutionCreate,
     SolutionUpdate,
     reopen_outage,
-    get_outages_csv_export,
+    CsvExportDetail,
 )
 
 if settings.ALLOW_ALL_TO_NOTIFY:
@@ -40,5 +40,5 @@ urlpatterns = [
         name="outage_solution_update",
     ),
     path("<int:pk>/reopen_outage", reopen_outage, name="reopen_outage"),
-    path("export_csv", get_outages_csv_export, name="outages_csv_export"),
+    path("export", CsvExportDetail.as_view(), name="export_detail"),
 ]

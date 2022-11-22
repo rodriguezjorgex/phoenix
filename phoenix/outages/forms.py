@@ -1,5 +1,13 @@
 from django.contrib.auth import get_user_model
-from django.forms import DateTimeField, DateTimeInput, ModelChoiceField, ModelForm
+from django.forms import (
+    DateTimeField,
+    DateTimeInput,
+    ModelChoiceField,
+    ModelForm,
+    Form,
+    DateInput,
+    DateField,
+)
 
 from ..core.models import Monitor, Outage, Solution
 
@@ -83,3 +91,12 @@ class MonitorUpdate(ModelForm):
         if commit:
             m.save(modified_by=self.modified_by)
         return m
+
+
+class ExportCsvForm(Form):
+    start_date = DateField(
+        widget=DateInput(attrs={"class": "mdl-textfield__input", "type": "date"})
+    )
+    end_date = DateField(
+        widget=DateInput(attrs={"class": "mdl-textfield__input", "type": "date"})
+    )

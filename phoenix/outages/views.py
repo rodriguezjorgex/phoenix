@@ -9,15 +9,22 @@ from django.http import (
     HttpResponse,
 )
 from django.urls import reverse
+from django.shortcuts import render
 from django.utils import timezone
-from django.views.generic import CreateView, DetailView, ListView, UpdateView
+from django.views.generic import CreateView, DetailView, ListView, UpdateView, View
 from django.shortcuts import redirect
 from rest_framework.decorators import api_view
 
 from ..core.models import Monitor, Outage, Solution
 from ..core.utils import user_can_modify_outage
 from ..slackbot.utils import resolved_at_to_utc
-from .forms import MonitorUpdate, OutageCreateForm, OutageUpdateForm, SolutionCreateForm
+from .forms import (
+    MonitorUpdate,
+    OutageCreateForm,
+    OutageUpdateForm,
+    SolutionCreateForm,
+    ExportCsvForm,
+)
 
 
 class OutagesList(ListView):
@@ -221,24 +228,27 @@ class MonitorUpdateView(UpdateView):
         return reverse("monitor_detail", kwargs={"pk": self.object.pk})
 
 
-@api_view(["GET"])
-def get_outages_csv_export(request):
-    date_from = request.query_params.get("from", "")
-    date_to = request.query_params.get("to", "")
+class CsvExportDetail(View):
+    template_name = "outages/export/detail.html"
 
-    try:
-        date_from = datetime.strptime(date_from, "%Y-%m-%d")
-    except ValueError:
-        return HttpResponseBadRequest(
-            "Bad query argument 'from' , format should be y-m-d"
-        )
+    def get(self, request):
+        form = ExportCsvForm()
+        return render(request, self.template_name, {"form": form})
 
-    try:
-        date_to = datetime.strptime(date_to, "%Y-%m-%d")
-    except ValueError:
-        return HttpResponseBadRequest("Bad query argument 'to', format should be y-m-d")
+    def post(self, request):
+        form = ExportCsvForm(request.POST)
+        if form.is_valid():
 
-    response = HttpResponse(content_type="text/csv")
+            date_from = form.cleaned_data.get("start_date")
+            date_to = form.cleaned_data.get("end_date")
+
+            response = HttpResponse(content_type="text/csv")
+            return _generate_csv(response, date_from, date_to)
+
+        return render(request, self.template_name, {"form": form})
+
+
+def _generate_csv(response, date_from, date_to):
     response[
         "Content-Disposition"
     ] = f'attachment; filename="outages_export_{date_from.strftime("%Y-%m-%d")}_{date_to.strftime("%Y-%m-%d")}.csv"'
@@ -260,7 +270,9 @@ def get_outages_csv_export(request):
     ]
     writer.writerow(row)
 
-    for outage in Outage.objects.filter(started_at__range=[date_from, date_to]):
+    for outage in Outage.objects.filter(
+        started_at__range=[date_from, date_to]
+    ).order_by("started_at"):
         abs_impact_on_turnover = (
             abs(outage.impact_on_turnover) if outage.impact_on_turnover else 0
         )
@@ -280,7 +292,6 @@ def get_outages_csv_export(request):
             report_url = ""
             link = ""
             solution_summary = ""
-
         row = [
             outage_range,
             outage.started_at.strftime("%V"),
@@ -297,5 +308,4 @@ def get_outages_csv_export(request):
         ]
 
         writer.writerow(row)
-
     return response
