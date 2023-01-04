@@ -32,8 +32,8 @@ class SlackbotConfig(AppConfig):
         celery_app.add_periodic_task(
             timedelta(minutes=1), notify_communication_assignee
         )
-
-        celery_app.add_periodic_task(
-            crontab(day_of_week=1, hour=1, minute=0),
-            generate_after_due_date_issues_report,
-        )
+        #
+        # celery_app.add_periodic_task(
+        #     crontab(day_of_week=1, hour=1, minute=0),
+        #     generate_after_due_date_issues_report,
+        # )
