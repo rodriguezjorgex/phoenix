@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-from celery.schedules import crontab
 from django.apps import AppConfig
 
 from ..core.celery import app as celery_app
@@ -18,7 +17,6 @@ class SlackbotConfig(AppConfig):
             sync_user_groups_with_google,
             notify_communication_assignee,
             notify_users_with_due_date_postmortems,
-            generate_after_due_date_issues_report,
             postmortem_notifications,
         )
 
