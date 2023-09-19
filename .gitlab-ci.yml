@@ -58,7 +58,7 @@ pytest:
   script:
     - >
       docker run
-      -e TEST_DATABASE_URL=postgres://postgres:postgres@$POSTGRES_PORT_5432_TCP_ADDR:5432/postgres
-      -e REDIS_URL=redis://$REDIS_PORT_6379_TCP_ADDR:6379/0
+      -e TEST_DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres
+      -e REDIS_URL=redis://redis:6379/0
       $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
       pytest -v --cov phoenix
