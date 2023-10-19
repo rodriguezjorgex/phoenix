@@ -52,7 +52,7 @@ slackclient==1.3.1        # via -r requirements.in
 sqlparse==0.3.0           # via django
 structlog==19.2.0         # via kiwi-structlog-config
 uritemplate==3.0.1        # via google-api-python-client
-urllib3==1.25.7           # via requests
+urllib3==1.26.18           # via requests
 vine==1.3.0               # via amqp, celery
 websocket-client==0.54.0  # via slackclient
 whitenoise==5.0.1         # via -r requirements.in
