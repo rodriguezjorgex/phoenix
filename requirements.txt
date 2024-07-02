@@ -17,7 +17,7 @@ datadog==0.33.0           # via -r requirements.in
 ddtrace==0.32.2           # via -r requirements.in
 decorator==4.4.1          # via datadog
 defusedxml==0.6.0         # via python3-openid
-django-allauth==0.41.0    # via -r requirements.in
+django-allauth==0.63.3    # via -r requirements.in
 django-celerybeat-status==0.0.10  # via -r requirements.in
 django-environ==0.4.5     # via -r requirements.in
 django-stronghold==0.3.2  # via -r requirements.in
