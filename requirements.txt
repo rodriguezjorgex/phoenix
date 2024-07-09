@@ -59,3 +59,4 @@ whitenoise==5.0.1         # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
