@@ -21,12 +21,12 @@ django-allauth==0.41.0    # via -r requirements.in
 django-celerybeat-status==0.0.10  # via -r requirements.in
 django-environ==0.4.5     # via -r requirements.in
 django-stronghold==0.3.2  # via -r requirements.in
-django==3.0.2             # via -r requirements.in, django-allauth, djangorestframework
-djangorestframework==3.11.0  # via -r requirements.in
+django==4.2.15             # via -r requirements.in, django-allauth, djangorestframework
+djangorestframework==3.15.2  # via -r requirements.in
 google-api-python-client==1.7.11  # via -r requirements.in
 google-auth-httplib2==0.0.3  # via google-api-python-client
 google-auth==1.12.0       # via -r requirements.in, google-api-python-client, google-auth-httplib2
-gunicorn==20.0.4          # via -r requirements.in
+gunicorn==22.0.0          # via -r requirements.in
 httplib2==0.16.0          # via google-api-python-client, google-auth-httplib2
 idna==2.8                 # via requests
 kiwi-structlog-config==0.1.8  # via -r requirements.in
@@ -49,7 +49,7 @@ rsa==4.0                  # via google-auth
 simplejson==3.17.0        # via kiwi-structlog-config
 six==1.14.0               # via google-api-python-client, google-auth, python-dateutil, python-gitlab, slackclient, structlog, websocket-client
 slackclient==1.3.1        # via -r requirements.in
-sqlparse==0.3.0           # via django
+sqlparse==0.5.0           # via django
 structlog==19.2.0         # via kiwi-structlog-config
 uritemplate==3.0.1        # via google-api-python-client
 urllib3==1.25.7           # via requests
@@ -59,3 +59,4 @@ whitenoise==5.0.1         # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
+setuptools>=70.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
