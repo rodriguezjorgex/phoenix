@@ -14,7 +14,7 @@ lazy-object-proxy==1.4.3  # via astroid
 mccabe==0.6.1             # via pylint
 more-itertools==8.1.0     # via pytest, zipp
 packaging==20.0           # via pytest, tox
-pg8000==1.13.2            # via testing-postgresql
+pg8000==1.31.5            # via testing-postgresql
 pluggy==0.13.1            # via pytest, tox
 py==1.8.1                 # via pytest, tox
 pylint==2.4.4
