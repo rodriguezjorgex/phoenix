@@ -7,7 +7,7 @@
 astroid==2.3.3            # via pylint
 attrs==19.3.0             # via pytest
 coverage==5.0.3           # via pytest-cov
-filelock==3.0.12          # via tox
+filelock==3.20.1          # via tox
 importlib-metadata==1.4.0  # via pluggy, pytest, tox
 isort==4.3.21             # via pylint
 lazy-object-proxy==1.4.3  # via astroid
