@@ -35,7 +35,7 @@ oauthlib==3.1.0           # via requests-oauthlib
 psutil==5.6.7             # via ddtrace
 psycopg2-binary==2.8.4    # via -r requirements.in
 pyasn1-modules==0.2.8     # via google-auth
-pyasn1==0.4.8             # via pyasn1-modules, rsa
+pyasn1==0.6.2             # via pyasn1-modules, rsa
 python-dateutil==2.8.1    # via arrow
 python-gitlab==1.15.0     # via -r requirements.in
 python-slugify==4.0.1     # via -r requirements.in
